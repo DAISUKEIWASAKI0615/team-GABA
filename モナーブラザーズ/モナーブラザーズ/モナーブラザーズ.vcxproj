@@ -126,11 +126,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="base.cpp" />
     <ClCompile Include="keycheck.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="player.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="base.h" />
     <ClInclude Include="keycheck.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="player.h" />

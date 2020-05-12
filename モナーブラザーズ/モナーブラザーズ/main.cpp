@@ -1,6 +1,6 @@
 #include "Dxlib.h"
-#include <math.h>
 #include "main.h"
+#include "player.h"
 #include "keycheck.h"
 
 #define COLOR_MODE 16
@@ -12,13 +12,15 @@ typedef enum {
 	GMODE_GAMEOVER
 }GMODE;
 
+
 GMODE gamemode;
 int gameCounter;
 int fadeCnt;
 bool fadeIn;
 bool fadeOut;
 bool pause;														//一時停止フラグ
-int blocks[15];
+
+class player;
 
 bool SysInit(void);
 void GameInit(void);
@@ -32,6 +34,7 @@ bool FadeInScreen(int fadeStep);
 bool FadeOutScreen(int fadeStep);
 void HitCheck(void);
 
+player* Player;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	if (SysInit() == false)
@@ -40,6 +43,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 
 	gamemode = GMODE_INIT;
+	Player = new player();
 
 	//ｹﾞｰﾑﾙｰﾌﾟ
 	while (ProcessMessage() == 0
@@ -47,6 +51,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	{
 		ClsDrawScreen();
 		KeyCheck();
+
 		switch (gamemode)
 		{
 		case GMODE_INIT:
@@ -131,18 +136,17 @@ bool SysInit(void)
 
 void GameInit(void)
 {
-	LoadDivGraph(_T("画像/ブロック群.png"), 15, 5, 3, 64, 64,blocks);
 }
 
 void GameTitle(void)
 {
 	GameTitleDraw();
-	DrawGraph(100, 100, blocks[0], false);
 }
 
 void GameTitleDraw(void)
 {
 	DrawString(0, 0, _T("GameTitle"), 0xFFFFFF);
+	Player->Draw();
 }
 
 void GameMain(void)
