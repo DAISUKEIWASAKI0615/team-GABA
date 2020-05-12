@@ -146,7 +146,6 @@ void GameTitle(void)
 void GameTitleDraw(void)
 {
 	DrawString(0, 0, _T("GameTitle"), 0xFFFFFF);
-	Player->Draw();
 }
 
 void GameMain(void)
@@ -162,6 +161,7 @@ void GameMain(void)
 	else
 	{
 		HitCheck();
+		Player->Update();
 		if (trgKey[START]) gamemode = GMODE_GAMEOVER;
 	}
 	GameMainDraw();
@@ -175,6 +175,7 @@ void GameMain(void)
 void GameMainDraw(void)
 {
 	DrawFormatString(0, 0, 0xFFFFFF, _T("GameMain:%d"), gameCounter);
+	Player->Draw();
 }
 
 void GameOver(void)

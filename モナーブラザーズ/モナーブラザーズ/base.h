@@ -12,6 +12,7 @@ public:
 	VECTOR pos;
 	int w, h;
 	int speed;
+	float accel;
 
 protected:
 	int graph;

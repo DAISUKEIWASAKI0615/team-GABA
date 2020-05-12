@@ -6,6 +6,7 @@ base::base()
 	pos = { 0,0 };
 	graph = 0;
 	speed = 0;
+	accel = -9.8;
 }
 
 base::~base()

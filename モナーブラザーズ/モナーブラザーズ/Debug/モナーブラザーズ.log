@@ -1,13 +1,4 @@
-﻿  base.cpp
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\base.cpp(17): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-  keycheck.cpp
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\keycheck.cpp(57): warning C4804: '~': 演算中の 'bool' 型の使用方法が安全ではありません
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\keycheck.cpp(57): warning C4805: '&': 演算中の 'bool' 型と 'int' 型の混用は安全ではありません
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\keycheck.cpp(58): warning C4804: '~': 演算中の 'bool' 型の使用方法が安全ではありません
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\keycheck.cpp(58): warning C4805: '&': 演算中の 'int' 型と 'bool' 型の混用は安全ではありません
-  main.cpp
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\main.cpp(114): warning C4551: 関数呼び出しに引数リストがありません。
-  player.cpp
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\player.cpp(16): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-  コードを生成中...
+﻿  player.cpp
+c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\player.cpp(20): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
+c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\player.cpp(24): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
   モナーブラザーズ.vcxproj -> C:\Users\aruru\Desktop\git\team-GABA\モナーブラザーズ\Debug\モナーブラザーズ.exe
