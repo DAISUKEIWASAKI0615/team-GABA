@@ -11,7 +11,7 @@ public:
 	void Draw();
 	VECTOR pos;
 	int w, h;
-	int speed;
+	float speed;
 	float accel;
 
 protected:

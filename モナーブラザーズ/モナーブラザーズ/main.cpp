@@ -2,6 +2,7 @@
 #include "main.h"
 #include "player.h"
 #include "keycheck.h"
+#include"map.h"
 
 #define COLOR_MODE 16
 
@@ -21,6 +22,7 @@ bool fadeOut;
 bool pause;														//ˆêŽž’âŽ~ƒtƒ‰ƒO
 
 class player;
+class map;
 
 bool SysInit(void);
 void GameInit(void);
@@ -35,6 +37,7 @@ bool FadeOutScreen(int fadeStep);
 void HitCheck(void);
 
 player* Player;
+map* Map;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	if (SysInit() == false)
@@ -44,6 +47,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	gamemode = GMODE_INIT;
 	Player = new player();
+	Map = new map();
 
 	//¹Þ°ÑÙ°Ìß
 	while (ProcessMessage() == 0
@@ -136,6 +140,7 @@ bool SysInit(void)
 
 void GameInit(void)
 {
+	
 }
 
 void GameTitle(void)
@@ -175,6 +180,7 @@ void GameMain(void)
 void GameMainDraw(void)
 {
 	DrawFormatString(0, 0, 0xFFFFFF, _T("GameMain:%d"), gameCounter);
+	Map->MapDraw();
 	Player->Draw();
 }
 
