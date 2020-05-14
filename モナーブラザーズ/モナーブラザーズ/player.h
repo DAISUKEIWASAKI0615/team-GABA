@@ -22,7 +22,7 @@ public:
 	void Update();
 
 	int pGraph[3];
-
+	bool runFlg;
 private:
 	bool jumpFlg;
 	DIRE dire;

@@ -3,11 +3,6 @@
 #include "player.h"
 #include "DxLib.h"
 #include "keycheck.h"
-#include "math.h"
-#include "map.h"
-
-class map;
-map* block;
 
 player::player()
 {
@@ -38,6 +33,7 @@ void player::Draw()
 
 void player::Update()
 {
+	runFlg = false;
 	if (newKey[P1_RIGHT] || key & PAD_INPUT_RIGHT)
 	{
 		dire = RIGHT;
@@ -67,10 +63,12 @@ void player::Update()
 	//}
 	if (newKey[P1_LEFT]|| key & PAD_INPUT_LEFT)
 	{
+		runFlg = true;
 		/*ˆÚ“®’†‚Å‹t•ûŒü‚É“®‚¢‚½‚ç*/
 		if (dire == RIGHT)
 		{
-			speed += 0.7;
+			if (pos.x < SCREEN_SIZE_X / 2)speed += 0.7;
+			else pos.x += 0;
 			if (speed == 0)
 			{
 				dire = RIGHT;
@@ -85,15 +83,17 @@ void player::Update()
 			}
 
 		}
-		pos.x += speed;
+		/*if (pos.x < SCREEN_SIZE_X / 2-32)*/pos.x += speed;
+		//else pos.x += 0;
 	}
 	else if (newKey[P1_RIGHT]|| key & PAD_INPUT_RIGHT)
 	{
+		runFlg = true;
 		/*ˆÚ“®’†‚Å‹t•ûŒü‚É“®‚¢‚½‚ç*/
 		if (dire == LEFT)
 		{
 			speed += -0.7;
-			if (speed < 0)
+			if (speed == 0)
 			{
 				dire = LEFT;
 			}
@@ -106,7 +106,9 @@ void player::Update()
 				speed = VELOCITY_X_MAX;
 			}
 		}
-		pos.x += speed;
+		/*if (pos.x < SCREEN_SIZE_X / 2-32)*/pos.x += speed;
+		//else pos.x += 0;
+
 	}
 	else if(speed!=0)
 	{
@@ -125,7 +127,8 @@ void player::Update()
 			{
 				speed = 0;
 			}
-			pos.x += speed;
+			/*if (pos.x < SCREEN_SIZE_X / 2 - 32)*/pos.x += speed;
+			//else pos.x += 0;
 		}
 	}
 	

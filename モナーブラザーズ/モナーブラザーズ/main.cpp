@@ -38,6 +38,8 @@ void HitCheck(void);
 
 player* Player;
 map* Map;
+
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	if (SysInit() == false)
@@ -167,6 +169,7 @@ void GameMain(void)
 	{
 		HitCheck();
 		Player->Update();
+		Map->Update(Player);
 		if (trgKey[START]) gamemode = GMODE_GAMEOVER;
 	}
 	GameMainDraw();
@@ -180,7 +183,7 @@ void GameMain(void)
 void GameMainDraw(void)
 {
 	DrawFormatString(0, 0, 0xFFFFFF, _T("GameMain:%d"), gameCounter);
-	Map->MapDraw();
+	Map->Draw(Map->scroll,Player);
 	Player->Draw();
 }
 
