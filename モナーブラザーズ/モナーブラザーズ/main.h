@@ -4,7 +4,7 @@
 #define SCREEN_SIZE_Y 768
 
 #define CHIP_SIZE        (64)					         // 一つのチップのサイズ
-#define MAP_WIDTH        (SCREEN_SIZE_X / CHIP_SIZE)*2     // マップの横幅
+#define MAP_WIDTH        (SCREEN_SIZE_X / CHIP_SIZE)*3     // マップの横幅
 #define MAP_HEIGHT       (SCREEN_SIZE_Y / CHIP_SIZE)     // マップの縦幅
 #define MOVE_FRAME      15          // 移動にかけるフレーム数
 #define P1 3.141592

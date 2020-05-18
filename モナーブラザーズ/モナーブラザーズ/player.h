@@ -23,11 +23,14 @@ public:
 
 	int pGraph[3];
 	bool runFlg;
+	VECTOR oldPos;
+
 private:
 	bool jumpFlg;
 	DIRE dire;
 	int key;
 	float move;
 	float f;
-	float oldY;
+	int anim;
+	int animCnt;
 };
