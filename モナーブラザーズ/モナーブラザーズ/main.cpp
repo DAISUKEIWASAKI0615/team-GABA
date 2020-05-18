@@ -183,7 +183,7 @@ void GameMain(void)
 void GameMainDraw(void)
 {
 	DrawFormatString(0, 0, 0xFFFFFF, _T("GameMain:%d"), gameCounter);
-	Map->Draw(Map->scroll);
+	Map->Draw();
 	Player->Draw();
 }
 
@@ -233,3 +233,4 @@ void HitCheck(void)
 {
 
 }
+
