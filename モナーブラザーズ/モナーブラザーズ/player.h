@@ -37,7 +37,6 @@ public:
 
 	int pGraph[3];
 	bool runFlg;
-	VECTOR oldPos;
 	int CharMove(float *X, float *Y, float *DownSP,float MoveX, float MoveY, float Size, bool *JumpFlag);
 
 private:
@@ -49,4 +48,6 @@ private:
 	int anim;
 	int animCnt;
 	float DownSp;
+	VECTOR oldPos;
+	VECTOR view;
 };

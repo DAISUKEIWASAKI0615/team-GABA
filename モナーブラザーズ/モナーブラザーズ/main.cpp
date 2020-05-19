@@ -127,7 +127,7 @@ bool SysInit(void)
 	SetWindowText(_T("モナーブラザーズ"));
 	//640x480ﾄﾞｯﾄ65536色ﾓｰﾄﾞに設定 //8ﾋﾞｯﾄは全て足すと0～255の256種類
 	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 16);
-	ChangeWindowMode(true);																//true:window　false:ﾌﾙｽｸﾘｰﾝ
+	ChangeWindowMode(false);																//true:window　false:ﾌﾙｽｸﾘｰﾝ
 
 	if (DxLib_Init() == -1)																//DXﾗｲﾌﾞﾗﾘの初期化 //DxLibを使った画像の読み込み等はこのﾌﾟﾛｸﾞﾗﾑのあとに
 	{

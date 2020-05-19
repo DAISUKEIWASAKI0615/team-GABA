@@ -1,7 +1,6 @@
 #include "base.h"
 #include "DxLib.h"
 
-
 base::base()
 {
 	pos = { 0,0 };
