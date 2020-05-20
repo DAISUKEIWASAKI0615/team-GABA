@@ -17,7 +17,3 @@ void base::Draw()
 	DrawGraph(pos.x, pos.y, graph, true);
 }
 
-void base::FloorColision(VECTOR pos, int mapdate[MAP_HEIGHT][MAP_WIDTH])
-{
-	//return mapdate[pos.y / CHIP_SIZE][pos.x / CHIP_SIZE];
-}

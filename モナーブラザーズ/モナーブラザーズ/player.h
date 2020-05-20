@@ -6,20 +6,6 @@
 #define G 0.3                         // キャラに掛かる重力加速度
 #define VELOCITY_X_MAX 10	// ﾌﾟﾚｲﾔｰ最大速度
 
-#ifndef MY_DEBUG_H_INCLUDED
-#define MY_DEBUG_H_INCLUDED
-
-#define DEBUG_BUILD  // enable debug print.
-
-#ifdef DEBUG_BUILD
-# define DEBUG_PUTS(str) puts(str)
-# define DEBUG_PRINTF(fmt, ...)  printf(fmt, __VA_ARGS__);                   
-#else
-# define DEBUG_PUTS(str)
-# define DEBUG_PRINTF(fmt, ...)
-#endif
-
-#endif
 typedef enum
 {
 	LEFT,
@@ -37,6 +23,7 @@ public:
 
 	int pGraph[3];
 	bool runFlg;
+	bool deathFlg;
 	int CharMove(float *X, float *Y, float *DownSP,float MoveX, float MoveY, float Size, bool *JumpFlag);
 
 private:

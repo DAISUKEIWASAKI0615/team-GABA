@@ -3,6 +3,7 @@
 #include "player.h"
 #include "keycheck.h"
 #include"map.h"
+#include"enemy.h"
 
 #define COLOR_MODE 16
 
@@ -23,6 +24,7 @@ bool pause;														//一時停止フラグ
 
 class player;
 class map;
+class enemy;
 
 bool SysInit(void);
 void GameInit(void);
@@ -38,7 +40,7 @@ void HitCheck(void);
 
 player* Player;
 map* Map;
-
+enemy* Enemy;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -50,6 +52,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	gamemode = GMODE_INIT;
 	Player = new player();
 	Map = new map();
+	Enemy = new enemy();
 
 	//ｹﾞｰﾑﾙｰﾌﾟ
 	while (ProcessMessage() == 0
@@ -94,6 +97,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			{
 				if (!FadeInScreen(5)) fadeIn = false;
 			}
+			if (Player->deathFlg == true)gamemode = GMODE_GAMEOVER;
 			break;
 		case GMODE_GAMEOVER:
 			GameOver();
@@ -127,7 +131,7 @@ bool SysInit(void)
 	SetWindowText(_T("モナーブラザーズ"));
 	//640x480ﾄﾞｯﾄ65536色ﾓｰﾄﾞに設定 //8ﾋﾞｯﾄは全て足すと0～255の256種類
 	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 16);
-	ChangeWindowMode(false);																//true:window　false:ﾌﾙｽｸﾘｰﾝ
+	ChangeWindowMode(true);																//true:window　false:ﾌﾙｽｸﾘｰﾝ
 
 	if (DxLib_Init() == -1)																//DXﾗｲﾌﾞﾗﾘの初期化 //DxLibを使った画像の読み込み等はこのﾌﾟﾛｸﾞﾗﾑのあとに
 	{
@@ -170,6 +174,7 @@ void GameMain(void)
 		HitCheck();
 		Player->Update();
 		Map->Update(Player);
+		
 		if (trgKey[START]) gamemode = GMODE_GAMEOVER;
 	}
 	GameMainDraw();
@@ -185,6 +190,7 @@ void GameMainDraw(void)
 	DrawFormatString(0, 0, 0xFFFFFF, _T("GameMain:%d"), gameCounter);
 	Map->Draw();
 	Player->Draw();
+	Enemy->Draw();
 }
 
 void GameOver(void)

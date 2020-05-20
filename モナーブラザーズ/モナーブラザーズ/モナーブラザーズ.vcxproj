@@ -127,6 +127,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="base.cpp" />
+    <ClCompile Include="enemy.cpp" />
     <ClCompile Include="keycheck.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map.cpp" />
@@ -134,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base.h" />
+    <ClInclude Include="enemy.h" />
     <ClInclude Include="keycheck.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="map.h" />
