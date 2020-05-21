@@ -79,10 +79,10 @@ void player::Update()
 		if ((trgKey[P1_UP] || (key & PAD_INPUT_A)))
 		{
 			jumpFlg = true;
-			move = ((pos.y - oldPos.y) + 35 );
+			move = ((pos.y - oldPos.y) + 35);
 			pos.y -= move;
 		}
-			//MoveY = move;
+		//MoveY = move;
 	}
 	if (newKey[P1_LEFT] || key & PAD_INPUT_LEFT)
 	{
@@ -148,6 +148,7 @@ void player::Update()
 
 	// 移動量に基づいてキャラクタの座標を移動
 	CharMove(&pos.x, &pos.y, &move, MoveX, MoveY, CHAR_SIZE, &jumpFlg);
+
 	if (pos.x < -14)
 	{
 		pos.x = -14;
@@ -156,7 +157,6 @@ void player::Update()
 	{
 		deathFlg = true;
 	}
-
 
 }
 
@@ -174,34 +174,35 @@ int player::CharMove(float *X, float *Y, float *DownSP,
 	// 先ず上下移動成分だけでチェック
 	{
 		// 左下のチェック、もしブロックの上辺に着いていたら落下を止める
-		if (chips->MapHitCheck(*X + 18, *Y + Size, &Dummy, &MoveY) == 3) *DownSP = 0.0F;
+		if (chips->MapHitCheck(*X + 14, *Y + Size, &Dummy, &MoveY) == 3) *DownSP = 0.0F;
 
 		// 右下のチェック、もしブロックの上辺に着いていたら落下を止める
-		if (chips->MapHitCheck(*X - 14 + Size, *Y + Size, &Dummy, &MoveY) == 3) *DownSP = 0.0F;
+		if (chips->MapHitCheck(*X - 10 + Size, *Y + Size, &Dummy, &MoveY) == 3) *DownSP = 0.0F;
 
 		// 左上のチェック、もしブロックの下辺に当たっていたら落下させる
-		if (chips->MapHitCheck(*X + 18, *Y, &Dummy, &MoveY) == 4)*DownSP *= -1.0F;
+		if (chips->MapHitCheck(*X + 14, *Y, &Dummy, &MoveY) == 4)*DownSP *= -1.0F;
 
 		// 右上のチェック、もしブロックの下辺に当たっていたら落下させる
-		if (chips->MapHitCheck(*X - 14 + Size, *Y , &Dummy, &MoveY) == 4)*DownSP *= -1.0F;
+		if (chips->MapHitCheck(*X - 10 + Size, *Y , &Dummy, &MoveY) == 4)*DownSP *= -1.0F;
 
 		// 上下移動成分を加算
 		*Y += MoveY;
+
 	}
 
 	// 後に左右移動成分だけでチェック
 	{
 		// 左下のチェック
-		chips->MapHitCheck(*X + 18, *Y + Size, &MoveX, &Dummy);
+		chips->MapHitCheck(*X + 14, *Y + Size, &MoveX, &Dummy);
 
 		// 右下のチェック
-		chips->MapHitCheck(*X - 18 + Size, *Y + Size, &MoveX, &Dummy);
+		chips->MapHitCheck(*X - 10 + Size, *Y + Size, &MoveX, &Dummy);
 
 		// 左上のチェック
-		chips->MapHitCheck(*X + 18, *Y, &MoveX, &Dummy);
+		chips->MapHitCheck(*X + 14, *Y, &MoveX, &Dummy);
 
 		// 右上のチェック
-		chips->MapHitCheck(*X - 18 + Size, *Y , &MoveX, &Dummy);
+		chips->MapHitCheck(*X - 10 + Size, *Y , &MoveX, &Dummy);
 
 		// 左右移動成分を加算
 		*X += MoveX;
@@ -210,10 +211,10 @@ int player::CharMove(float *X, float *Y, float *DownSP,
 	// 接地判定
 	{
 		// キャラクタの左下と右下の下に地面があるか調べる
-		if ((chips->GetChipParam(*X + 18, *Y + Size + 1.0F) == 3 || chips->GetChipParam(*X + Size - 14, *Y + Size + 1.0F) == 3) ||
-			(chips->GetChipParam(*X + 18, *Y + Size + 1.0F) == 0 || chips->GetChipParam(*X + Size - 14, *Y + Size + 1.0F) == 0) ||
-			(chips->GetChipParam(*X + 18, *Y + Size + 1.0F) == 1 || chips->GetChipParam(*X + Size - 14, *Y + Size + 1.0F) == 1) ||
-			(chips->GetChipParam(*X + 18, *Y + Size + 1.0F) == 2 || chips->GetChipParam(*X + Size - 14, *Y + Size + 1.0F) == 2))
+		if ((chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 3 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 3) ||
+			(chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 0 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 0) ||
+			(chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 1 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 1) ||
+			(chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 2 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 2))
 		{
 			// 足場が在ったら接地中にする
 			*JumpFlag = FALSE;
@@ -230,3 +231,4 @@ int player::CharMove(float *X, float *Y, float *DownSP,
 	// 終了
 	return 0;
 }
+
