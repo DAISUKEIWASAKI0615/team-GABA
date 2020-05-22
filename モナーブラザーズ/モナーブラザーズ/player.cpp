@@ -12,7 +12,7 @@ map* chips;
 player::player()
 {
 	pos = { 200,100 };
-	LoadDivGraph(_T("画像/モナー.png"), 3, 3, 1, 64, 64,pGraph,false);
+	LoadDivGraph(_T("画像/モナー.png"), 5, 5, 1, 64, 64,pGraph,false);
 	speed = 0;
 	dire = RIGHT;
 	jumpFlg = false;
@@ -20,10 +20,15 @@ player::player()
 	anim = 0;
 	animCnt = 5;
 	oldPos = pos;
+	//move = 35;
 	chips = new map;
 	DownSp = 0;
 	view = pos;
 	deathFlg = false;
+	dropFlg = false;
+	jumpCnt = 0;
+	vy = 0;
+	gr = 0;
 }
 
 player::~player()
@@ -45,8 +50,9 @@ void player::Draw()
 			animCnt = 5;
 			anim %= 2;
 		}
-		if(jumpFlg==true)DrawGraph(view.x, view.y, pGraph[2], true);
+		if(jumpFlg==true && dropFlg == false)DrawGraph(view.x, view.y, pGraph[2], true);
 		else if(runFlg==true)DrawGraph(view.x, view.y, pGraph[charAnim[anim]], true);
+		else if (dropFlg == true)DrawGraph(view.x, view.y, pGraph[3], true);
 		else DrawGraph(view.x, view.y, pGraph[0], true);
 	}
 	else if(dire == LEFT)
@@ -57,8 +63,9 @@ void player::Draw()
 			animCnt = 5;
 			anim %= 2;
 		}
-		if (jumpFlg == true)DrawTurnGraph(view.x, view.y, pGraph[2], true);
+		if (jumpFlg == true && dropFlg == false)DrawTurnGraph(view.x, view.y, pGraph[2], true);
 		else if (runFlg == true)DrawTurnGraph(view.x, view.y, pGraph[charAnim[anim]], true);
+		else if (dropFlg == true)DrawTurnGraph(view.x, view.y, pGraph[3], true);
 		else DrawGraph(view.x, view.y, pGraph[0], true);
 	}
 }
@@ -66,24 +73,44 @@ void player::Draw()
 void player::Update()
 {
 	runFlg = false;
-	float MoveX, MoveY;
 
 	// 移動量の初期化
 	MoveX = 0.0F;
 	MoveY = 0.0F;
-
 	key = GetJoypadInputState(DX_INPUT_KEY_PAD1);
 
-	if (jumpFlg == false)
+	if (jumpFlg == false && dropFlg == false)
 	{
-		if ((trgKey[P1_UP] || (key & PAD_INPUT_A)))
+		if ((newKey[P1_UP] || (key & PAD_INPUT_A)))
+		{
+			jumpCnt += 0.2;
+			if (jumpCnt > 1)jumpCnt = 1;
+		}
+		if (jumpCnt >0&&!(newKey[P1_UP] || (key & PAD_INPUT_A)))
 		{
 			jumpFlg = true;
-			move = ((pos.y - oldPos.y) + 35);
+			move = 35*jumpCnt;
 			pos.y -= move;
+			jumpCnt = 0;
 		}
-		//MoveY = move;
+
 	}
+	if (jumpFlg == true&& dropFlg == false)
+	{
+		if ((trgKey[P1_DOWN] || (key & PAD_INPUT_B)))
+		{
+			MoveY = 0;
+			dropFlg = true;
+		}
+	}
+
+	if (jumpFlg == true && dropFlg == true)
+	{
+		MoveX = 0;
+		move = ((pos.y - oldPos.y) + f)*0.4;
+		if(move>0)pos.y += move;
+	}
+
 	if (newKey[P1_LEFT] || key & PAD_INPUT_LEFT)
 	{
 		dire = LEFT;
@@ -93,7 +120,7 @@ void player::Update()
 		{
 			speed = -VELOCITY_X_MAX;
 		}
-		MoveX = speed;
+		if(dropFlg == true)speed = 0;
 	}
 	else if (newKey[P1_RIGHT] || key & PAD_INPUT_RIGHT)
 	{
@@ -104,7 +131,7 @@ void player::Update()
 		{
 			speed = VELOCITY_X_MAX;
 		}
-		MoveX = speed;
+		if (dropFlg == true)speed = 0;
 	}
 	else if (speed != 0)
 	{
@@ -115,7 +142,7 @@ void player::Update()
 			{
 				speed = 0;
 			}
-			MoveX = speed;
+			if (dropFlg == true)speed = 0;
 		}
 		else if (dire == RIGHT)
 		{
@@ -124,16 +151,17 @@ void player::Update()
 			{
 				speed = 0;
 			}
-			MoveX = speed;
+			if (dropFlg == true)speed=0;
 		}
 	}
-	move = (pos.y - oldPos.y) + f;
-	if (move > 63)
-	{
-		move = 63;
-	}
-	oldPos.y = pos.y;
-	f = 2;
+	MoveX = speed;
+		move = (pos.y - oldPos.y) + f;
+		if (move > 63)
+		{
+			move = 63;
+		}
+		oldPos.y = pos.y;
+		f = 2;
 
 	MoveY = move;
 
@@ -218,6 +246,7 @@ int player::CharMove(float *X, float *Y, float *DownSP,
 		{
 			// 足場が在ったら接地中にする
 			*JumpFlag = FALSE;
+			dropFlg = false;
 		}
 		else
 		{

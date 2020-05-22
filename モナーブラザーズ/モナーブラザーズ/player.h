@@ -21,13 +21,15 @@ public:
 	void Draw();
 	void Update();
 
-	int pGraph[3];
+	int pGraph[5];
 	bool runFlg;
 	bool deathFlg;
+	bool dropFlg;
+	bool jumpFlg;
 	int CharMove(float *X, float *Y, float *DownSP,float MoveX, float MoveY, float Size, bool *JumpFlag);
 
+	float MoveX, MoveY;
 private:
-	bool jumpFlg;
 	DIRE dire;
 	int key;
 	float move;
@@ -37,4 +39,7 @@ private:
 	float DownSp;
 	VECTOR oldPos;
 	VECTOR view;
+	float jumpCnt;
+	float vy;
+	float gr;
 };
