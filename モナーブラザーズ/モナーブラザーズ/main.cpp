@@ -146,7 +146,6 @@ bool SysInit(void)
 
 void GameInit(void)
 {
-	
 }
 
 void GameTitle(void)

@@ -11,7 +11,7 @@ map* chips;
 
 player::player()
 {
-	pos = { 200,100 };
+	pos = { 200,SCREEN_SIZE_Y-128 };
 	LoadDivGraph(_T("画像/モナー.png"), 5, 5, 1, 64, 64,pGraph,false);
 	speed = 0;
 	dire = RIGHT;
@@ -20,7 +20,7 @@ player::player()
 	anim = 0;
 	animCnt = 5;
 	oldPos = pos;
-	//move = 35;
+	move = 0;
 	chips = new map;
 	DownSp = 0;
 	view = pos;
@@ -51,8 +51,8 @@ void player::Draw()
 			anim %= 2;
 		}
 		if(jumpFlg==true && dropFlg == false)DrawGraph(view.x, view.y, pGraph[2], true);
-		else if(runFlg==true)DrawGraph(view.x, view.y, pGraph[charAnim[anim]], true);
 		else if (dropFlg == true)DrawGraph(view.x, view.y, pGraph[3], true);
+		else if(runFlg==true)DrawGraph(view.x, view.y, pGraph[charAnim[anim]], true);
 		else DrawGraph(view.x, view.y, pGraph[0], true);
 	}
 	else if(dire == LEFT)
@@ -64,8 +64,8 @@ void player::Draw()
 			anim %= 2;
 		}
 		if (jumpFlg == true && dropFlg == false)DrawTurnGraph(view.x, view.y, pGraph[2], true);
-		else if (runFlg == true)DrawTurnGraph(view.x, view.y, pGraph[charAnim[anim]], true);
 		else if (dropFlg == true)DrawTurnGraph(view.x, view.y, pGraph[3], true);
+		else if (runFlg == true)DrawTurnGraph(view.x, view.y, pGraph[charAnim[anim]], true);
 		else DrawGraph(view.x, view.y, pGraph[0], true);
 	}
 }
@@ -79,22 +79,16 @@ void player::Update()
 	MoveY = 0.0F;
 	key = GetJoypadInputState(DX_INPUT_KEY_PAD1);
 
-	if (jumpFlg == false && dropFlg == false)
+	if ((newKey[P1_UP] || (key & PAD_INPUT_A)))
 	{
-		if ((newKey[P1_UP] || (key & PAD_INPUT_A)))
-		{
-			jumpCnt += 0.2;
-			if (jumpCnt > 1)jumpCnt = 1;
-		}
-		if (jumpCnt >0&&!(newKey[P1_UP] || (key & PAD_INPUT_A)))
+		if (jumpFlg == false)
 		{
 			jumpFlg = true;
-			move = 35*jumpCnt;
-			pos.y -= move;
-			jumpCnt = 0;
+			DownSp = -35;
 		}
-
+		gr = 1.5;
 	}
+	else gr = 2;
 	if (jumpFlg == true&& dropFlg == false)
 	{
 		if ((trgKey[P1_DOWN] || (key & PAD_INPUT_B)))
@@ -107,8 +101,7 @@ void player::Update()
 	if (jumpFlg == true && dropFlg == true)
 	{
 		MoveX = 0;
-		move = ((pos.y - oldPos.y) + f)*0.4;
-		if(move>0)pos.y += move;
+		gr += 3;
 	}
 
 	if (newKey[P1_LEFT] || key & PAD_INPUT_LEFT)
@@ -154,37 +147,31 @@ void player::Update()
 			if (dropFlg == true)speed=0;
 		}
 	}
+	DownSp += gr;
 	MoveX = speed;
-		move = (pos.y - oldPos.y) + f;
-		if (move > 63)
-		{
-			move = 63;
-		}
-		oldPos.y = pos.y;
-		f = 2;
+	MoveY = DownSp;
 
-	MoveY = move;
+chips->cameraX = pos.x + (CHIP_SIZE / 2);
 
-	chips->cameraX = pos.x + (CHIP_SIZE / 2);
-
-	//限界値チェック
-	if (chips->cameraX < SCREEN_SIZE_X / 2)chips->cameraX = SCREEN_SIZE_X / 2;
-	if (chips->cameraY < SCREEN_SIZE_Y / 2)chips->cameraY = SCREEN_SIZE_Y / 2;
-	if (chips->cameraX > (MAP_WIDTH *CHIP_SIZE - SCREEN_SIZE_X / 2)) chips->cameraX = (MAP_WIDTH*CHIP_SIZE - SCREEN_SIZE_X / 2);
-	if (chips->cameraY > (MAP_HEIGHT*CHIP_SIZE - SCREEN_SIZE_Y / 2)) chips->cameraY = (MAP_HEIGHT*CHIP_SIZE - SCREEN_SIZE_Y / 2);
+//限界値チェック
+if (chips->cameraX < SCREEN_SIZE_X / 2)chips->cameraX = SCREEN_SIZE_X / 2;
+if (chips->cameraY < SCREEN_SIZE_Y / 2)chips->cameraY = SCREEN_SIZE_Y / 2;
+if (chips->cameraX > (MAP_WIDTH *CHIP_SIZE - SCREEN_SIZE_X / 2)) chips->cameraX = (MAP_WIDTH*CHIP_SIZE - SCREEN_SIZE_X / 2);
+if (chips->cameraY > (MAP_HEIGHT*CHIP_SIZE - SCREEN_SIZE_Y / 2)) chips->cameraY = (MAP_HEIGHT*CHIP_SIZE - SCREEN_SIZE_Y / 2);
 
 
-	// 移動量に基づいてキャラクタの座標を移動
-	CharMove(&pos.x, &pos.y, &move, MoveX, MoveY, CHAR_SIZE, &jumpFlg);
+// 移動量に基づいてキャラクタの座標を移動
+CharMove(&pos.x, &pos.y, &DownSp, MoveX, MoveY, CHAR_SIZE, &jumpFlg);
 
-	if (pos.x < -14)
-	{
-		pos.x = -14;
-	}
-	if (pos.y > SCREEN_SIZE_Y)
-	{
-		deathFlg = true;
-	}
+
+if (pos.x < -14)
+{
+	pos.x = -14;
+}
+if (pos.y > SCREEN_SIZE_Y)
+{
+	deathFlg = true;
+}
 
 }
 
@@ -211,7 +198,7 @@ int player::CharMove(float *X, float *Y, float *DownSP,
 		if (chips->MapHitCheck(*X + 14, *Y, &Dummy, &MoveY) == 4)*DownSP *= -1.0F;
 
 		// 右上のチェック、もしブロックの下辺に当たっていたら落下させる
-		if (chips->MapHitCheck(*X - 10 + Size, *Y , &Dummy, &MoveY) == 4)*DownSP *= -1.0F;
+		if (chips->MapHitCheck(*X - 10 + Size, *Y, &Dummy, &MoveY) == 4)*DownSP *= -1.0F;
 
 		// 上下移動成分を加算
 		*Y += MoveY;
@@ -230,7 +217,7 @@ int player::CharMove(float *X, float *Y, float *DownSP,
 		chips->MapHitCheck(*X + 14, *Y, &MoveX, &Dummy);
 
 		// 右上のチェック
-		chips->MapHitCheck(*X - 10 + Size, *Y , &MoveX, &Dummy);
+		chips->MapHitCheck(*X - 10 + Size, *Y, &MoveX, &Dummy);
 
 		// 左右移動成分を加算
 		*X += MoveX;
@@ -242,16 +229,23 @@ int player::CharMove(float *X, float *Y, float *DownSP,
 		if ((chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 3 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 3) ||
 			(chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 0 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 0) ||
 			(chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 1 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 1) ||
-			(chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 2 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 2))
+			((chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 2 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 2) &&
+			((chips->GetChipsFlag(*X + 14, *Y + Size + 1.0F) == true) || chips->GetChipsFlag(*X + Size - 10, *Y + Size + 1.0F) == true)) ||
+				(chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 10 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 10) ||
+			(chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 11 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 11) ||
+			(chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 12 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 12) ||
+			(chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 13 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 13) ||
+			(chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 6 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 6) &&
+			((chips->GetChipsFlag(*X + 14, *Y + Size + 1.0F) == true) || chips->GetChipsFlag(*X + Size - 10, *Y + Size + 1.0F) == true))
 		{
 			// 足場が在ったら接地中にする
-			*JumpFlag = FALSE;
+			*JumpFlag = false;
 			dropFlg = false;
 		}
 		else
 		{
 			// 足場が無かったらジャンプ中にする
-			*JumpFlag = TRUE;
+			*JumpFlag = true;
 		}
 	}
 
