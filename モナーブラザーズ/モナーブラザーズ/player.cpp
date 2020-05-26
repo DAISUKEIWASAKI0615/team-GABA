@@ -89,7 +89,7 @@ void player::Update()
 		gr = 1.5;
 	}
 	else gr = 2;
-	if (jumpFlg == true&& dropFlg == false)
+	if (jumpFlg == true && dropFlg == false)
 	{
 		if ((trgKey[P1_DOWN] || (key & PAD_INPUT_B)))
 		{
@@ -113,7 +113,7 @@ void player::Update()
 		{
 			speed = -VELOCITY_X_MAX;
 		}
-		if(dropFlg == true)speed = 0;
+		if (dropFlg == true)speed = 0;
 	}
 	else if (newKey[P1_RIGHT] || key & PAD_INPUT_RIGHT)
 	{
@@ -144,34 +144,34 @@ void player::Update()
 			{
 				speed = 0;
 			}
-			if (dropFlg == true)speed=0;
+			if (dropFlg == true)speed = 0;
 		}
 	}
 	DownSp += gr;
 	MoveX = speed;
 	MoveY = DownSp;
 
-chips->cameraX = pos.x + (CHIP_SIZE / 2);
+	chips->cameraX = pos.x + (CHIP_SIZE / 2);
 
-//限界値チェック
-if (chips->cameraX < SCREEN_SIZE_X / 2)chips->cameraX = SCREEN_SIZE_X / 2;
-if (chips->cameraY < SCREEN_SIZE_Y / 2)chips->cameraY = SCREEN_SIZE_Y / 2;
-if (chips->cameraX > (MAP_WIDTH *CHIP_SIZE - SCREEN_SIZE_X / 2)) chips->cameraX = (MAP_WIDTH*CHIP_SIZE - SCREEN_SIZE_X / 2);
-if (chips->cameraY > (MAP_HEIGHT*CHIP_SIZE - SCREEN_SIZE_Y / 2)) chips->cameraY = (MAP_HEIGHT*CHIP_SIZE - SCREEN_SIZE_Y / 2);
-
-
-// 移動量に基づいてキャラクタの座標を移動
-CharMove(&pos.x, &pos.y, &DownSp, MoveX, MoveY, CHAR_SIZE, &jumpFlg);
+	//限界値チェック
+	if (chips->cameraX < SCREEN_SIZE_X / 2)chips->cameraX = SCREEN_SIZE_X / 2;
+	if (chips->cameraY < SCREEN_SIZE_Y / 2)chips->cameraY = SCREEN_SIZE_Y / 2;
+	if (chips->cameraX > (MAP_WIDTH *CHIP_SIZE - SCREEN_SIZE_X / 2)) chips->cameraX = (MAP_WIDTH*CHIP_SIZE - SCREEN_SIZE_X / 2);
+	if (chips->cameraY > (MAP_HEIGHT*CHIP_SIZE - SCREEN_SIZE_Y / 2)) chips->cameraY = (MAP_HEIGHT*CHIP_SIZE - SCREEN_SIZE_Y / 2);
 
 
-if (pos.x < -14)
-{
-	pos.x = -14;
-}
-if (pos.y > SCREEN_SIZE_Y)
-{
-	deathFlg = true;
-}
+	// 移動量に基づいてキャラクタの座標を移動
+	CharMove(&pos.x, &pos.y, &DownSp, MoveX, MoveY, CHAR_SIZE, &jumpFlg);
+
+
+	if (pos.x < -14)
+	{
+		pos.x = -14;
+	}
+	if (pos.y > SCREEN_SIZE_Y)
+	{
+		deathFlg = true;
+	}
 
 }
 
@@ -229,14 +229,15 @@ int player::CharMove(float *X, float *Y, float *DownSP,
 		if ((chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 3 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 3) ||
 			(chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 0 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 0) ||
 			(chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 1 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 1) ||
-			((chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 2 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 2) &&
-			((chips->GetChipsFlag(*X + 14, *Y + Size + 1.0F) == true) || chips->GetChipsFlag(*X + Size - 10, *Y + Size + 1.0F) == true)) ||
-				(chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 10 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 10) ||
+		   ((chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 2 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 2) &&
+		   ((chips->GetChipsFlag(*X + 14, *Y + Size + 1.0F) == true) || chips->GetChipsFlag(*X + Size - 10, *Y + Size + 1.0F) == true)) ||
+			(chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 10 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 10) ||
 			(chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 11 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 11) ||
 			(chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 12 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 12) ||
 			(chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 13 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 13) ||
-			(chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 6 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 6) &&
-			((chips->GetChipsFlag(*X + 14, *Y + Size + 1.0F) == true) || chips->GetChipsFlag(*X + Size - 10, *Y + Size + 1.0F) == true))
+			(chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 6  || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 6) &&
+		   ((chips->GetChipsFlag(*X + 14, *Y + Size + 1.0F) == true) || chips->GetChipsFlag(*X + Size - 10, *Y + Size + 1.0F) == true) ||
+			(chips->GetChipParam(*X + 14, *Y + Size + 1.0F) == 4 || chips->GetChipParam(*X + Size - 10, *Y + Size + 1.0F) == 4))
 		{
 			// 足場が在ったら接地中にする
 			*JumpFlag = false;
