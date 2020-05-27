@@ -1,29 +1,4 @@
-﻿  enemy.cpp
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\enemy.cpp(28): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-  main.cpp
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\main.cpp(124): warning C4551: 関数呼び出しに引数リストがありません。
-  map.cpp
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\map.cpp(44): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\map.cpp(45): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\map.cpp(48): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\map.cpp(53): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\map.cpp(56): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\map.cpp(59): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\map.cpp(62): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\map.cpp(65): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\map.cpp(68): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\map.cpp(71): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\map.cpp(74): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\map.cpp(75): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\map.cpp(78): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\map.cpp(81): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\map.cpp(84): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\map.cpp(87): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\map.cpp(90): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\map.cpp(93): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\map.cpp(110): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
-c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\map.cpp(111): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
-  player.cpp
+﻿  player.cpp
 c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\player.cpp(53): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
 c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\player.cpp(54): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
 c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\player.cpp(55): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
@@ -36,5 +11,4 @@ c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザ
 c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\player.cpp(122): warning C4305: '+=': 'double' から 'float' へ切り詰めます。
 c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\player.cpp(133): warning C4305: '+=': 'double' から 'float' へ切り詰めます。
 c:\users\aruru\desktop\git\team-gaba\モナーブラザーズ\モナーブラザーズ\player.cpp(142): warning C4305: '+=': 'double' から 'float' へ切り詰めます。
-  コードを生成中...
   モナーブラザーズ.vcxproj -> C:\Users\aruru\Desktop\git\team-GABA\モナーブラザーズ\Debug\モナーブラザーズ.exe
