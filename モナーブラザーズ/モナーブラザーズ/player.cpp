@@ -11,7 +11,7 @@ map* chips;
 
 player::player()
 {
-	pos = { 200,SCREEN_SIZE_Y-128 };
+	pos = { 200,SCREEN_SIZE_Y-320 };
 	LoadDivGraph(_T("画像/モナー.png"), 5, 5, 1, 64, 64,pGraph,false);
 	speed = 0;
 	dire = RIGHT;
@@ -29,6 +29,8 @@ player::player()
 	jumpCnt = 0;
 	vy = 0;
 	gr = 0;
+	playerStock = 2;
+	deathCnt = 0;
 }
 
 player::~player()
@@ -50,8 +52,9 @@ void player::Draw()
 			animCnt = 5;
 			anim %= 2;
 		}
-		if(jumpFlg==true && dropFlg == false)DrawGraph(view.x, view.y, pGraph[2], true);
+		if(deathFlg==true)DrawGraph(view.x, view.y, pGraph[4], true);
 		else if (dropFlg == true)DrawGraph(view.x, view.y, pGraph[3], true);
+		else if(jumpFlg==true && dropFlg == false)DrawGraph(view.x, view.y, pGraph[2], true);
 		else if(runFlg==true)DrawGraph(view.x, view.y, pGraph[charAnim[anim]], true);
 		else DrawGraph(view.x, view.y, pGraph[0], true);
 	}
@@ -63,114 +66,136 @@ void player::Draw()
 			animCnt = 5;
 			anim %= 2;
 		}
-		if (jumpFlg == true && dropFlg == false)DrawTurnGraph(view.x, view.y, pGraph[2], true);
+		if (deathFlg == true)DrawTurnGraph(view.x, view.y, pGraph[4], true);
 		else if (dropFlg == true)DrawTurnGraph(view.x, view.y, pGraph[3], true);
+		else if (jumpFlg == true && dropFlg == false)DrawTurnGraph(view.x, view.y, pGraph[2], true);
 		else if (runFlg == true)DrawTurnGraph(view.x, view.y, pGraph[charAnim[anim]], true);
 		else DrawGraph(view.x, view.y, pGraph[0], true);
 	}
+
 }
 
 void player::Update()
 {
 	runFlg = false;
 
-	// 移動量の初期化
-	MoveX = 0.0F;
-	MoveY = 0.0F;
-	key = GetJoypadInputState(DX_INPUT_KEY_PAD1);
-
-	if ((newKey[P1_UP] || (key & PAD_INPUT_A)))
+	if (deathFlg != true)
 	{
-		if (jumpFlg == false)
+		// 移動量の初期化
+		MoveX = 0.0F;
+		MoveY = 0.0F;
+		key = GetJoypadInputState(DX_INPUT_KEY_PAD1);
+
+		if ((newKey[P1_UP] || (key & PAD_INPUT_A)))
+		{
+			if (jumpFlg == false)
+			{
+				jumpFlg = true;
+				DownSp = -35;
+			}
+			gr = 1.5;
+		}
+		else gr = 2;
+		if (jumpFlg == true && dropFlg == false)
+		{
+			if ((trgKey[P1_DOWN] || (key & PAD_INPUT_B)))
+			{
+				MoveY = 0;
+				dropFlg = true;
+			}
+		}
+
+		if (jumpFlg == true && dropFlg == true)
+		{
+			MoveX = 0;
+			gr += 3;
+		}
+
+		if (newKey[P1_LEFT] || key & PAD_INPUT_LEFT)
+		{
+			dire = LEFT;
+			runFlg = true;
+			speed += -0.3;
+			if (speed < -VELOCITY_X_MAX)
+			{
+				speed = -VELOCITY_X_MAX;
+			}
+			if (dropFlg == true)speed = 0;
+		}
+		else if (newKey[P1_RIGHT] || key & PAD_INPUT_RIGHT)
+		{
+			dire = RIGHT;
+			runFlg = true;
+			speed += 0.3;
+			if (speed > VELOCITY_X_MAX)
+			{
+				speed = VELOCITY_X_MAX;
+			}
+			if (dropFlg == true)speed = 0;
+		}
+		else if (speed != 0)
 		{
 			jumpFlg = true;
-			DownSp = -35;
-		}
-		gr = 1.5;
-	}
-	else gr = 2;
-	if (jumpFlg == true && dropFlg == false)
-	{
-		if ((trgKey[P1_DOWN] || (key & PAD_INPUT_B)))
-		{
-			MoveY = 0;
-			dropFlg = true;
-		}
-	}
-
-	if (jumpFlg == true && dropFlg == true)
-	{
-		MoveX = 0;
-		gr += 3;
-	}
-
-	if (newKey[P1_LEFT] || key & PAD_INPUT_LEFT)
-	{
-		dire = LEFT;
-		runFlg = true;
-		speed += -0.3;
-		if (speed < -VELOCITY_X_MAX)
-		{
-			speed = -VELOCITY_X_MAX;
-		}
-		if (dropFlg == true)speed = 0;
-	}
-	else if (newKey[P1_RIGHT] || key & PAD_INPUT_RIGHT)
-	{
-		dire = RIGHT;
-		runFlg = true;
-		speed += 0.3;
-		if (speed > VELOCITY_X_MAX)
-		{
-			speed = VELOCITY_X_MAX;
-		}
-		if (dropFlg == true)speed = 0;
-	}
-	else if (speed != 0)
-	{
-		jumpFlg = true;
-		if (dire == LEFT) {
-			speed += 0.3;
-			if (speed > 0)
-			{
-				speed = 0;
+			if (dire == LEFT) {
+				speed += 0.3;
+				if (speed > 0)
+				{
+					speed = 0;
+				}
+				if (dropFlg == true)speed = 0;
 			}
-			if (dropFlg == true)speed = 0;
-		}
-		else if (dire == RIGHT)
-		{
-			speed += -0.3;
-			if (speed < 0)
+			else if (dire == RIGHT)
 			{
-				speed = 0;
+				speed += -0.3;
+				if (speed < 0)
+				{
+					speed = 0;
+				}
+				if (dropFlg == true)speed = 0;
 			}
-			if (dropFlg == true)speed = 0;
+		}
+		DownSp += gr;
+		MoveX = speed;
+		MoveY = DownSp;
+
+		chips->cameraX = pos.x + (CHIP_SIZE / 2);
+
+		//限界値チェック
+		if (chips->cameraX < SCREEN_SIZE_X / 2)chips->cameraX = SCREEN_SIZE_X / 2;
+		if (chips->cameraY < SCREEN_SIZE_Y / 2)chips->cameraY = SCREEN_SIZE_Y / 2;
+		if (chips->cameraX > (MAP_WIDTH *CHIP_SIZE - SCREEN_SIZE_X / 2)) chips->cameraX = (MAP_WIDTH*CHIP_SIZE - SCREEN_SIZE_X / 2);
+		if (chips->cameraY > (MAP_HEIGHT*CHIP_SIZE - SCREEN_SIZE_Y / 2)) chips->cameraY = (MAP_HEIGHT*CHIP_SIZE - SCREEN_SIZE_Y / 2);
+
+
+		// 移動量に基づいてキャラクタの座標を移動
+		CharMove(&pos.x, &pos.y, &DownSp, MoveX, MoveY, CHAR_SIZE, &jumpFlg);
+
+
+		if (pos.x < -14)
+		{
+			pos.x = -14;
+		}
+		if (pos.y > SCREEN_SIZE_Y)
+		{
+			deathFlg = true;
+		}
+		if (deathFlg == true)
+		{
+			playerStock--;
 		}
 	}
-	DownSp += gr;
-	MoveX = speed;
-	MoveY = DownSp;
-
-	chips->cameraX = pos.x + (CHIP_SIZE / 2);
-
-	//限界値チェック
-	if (chips->cameraX < SCREEN_SIZE_X / 2)chips->cameraX = SCREEN_SIZE_X / 2;
-	if (chips->cameraY < SCREEN_SIZE_Y / 2)chips->cameraY = SCREEN_SIZE_Y / 2;
-	if (chips->cameraX > (MAP_WIDTH *CHIP_SIZE - SCREEN_SIZE_X / 2)) chips->cameraX = (MAP_WIDTH*CHIP_SIZE - SCREEN_SIZE_X / 2);
-	if (chips->cameraY > (MAP_HEIGHT*CHIP_SIZE - SCREEN_SIZE_Y / 2)) chips->cameraY = (MAP_HEIGHT*CHIP_SIZE - SCREEN_SIZE_Y / 2);
-
-
-	// 移動量に基づいてキャラクタの座標を移動
-	CharMove(&pos.x, &pos.y, &DownSp, MoveX, MoveY, CHAR_SIZE, &jumpFlg);
-
-
-	if (pos.x < -14)
+	else if (deathFlg == true)
 	{
-		pos.x = -14;
-	}
-	if (pos.y > SCREEN_SIZE_Y)
-	{
-		deathFlg = true;
+		if (pos.y < SCREEN_SIZE_Y)
+		{
+			deathCnt++;
+			if (deathCnt > 10)
+			{
+				pos.y -= 30;
+				gr += 2;
+				pos.y += gr;
+			}
+		}
 	}
 }
 

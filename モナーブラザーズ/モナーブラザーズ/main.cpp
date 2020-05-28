@@ -17,10 +17,24 @@ typedef enum {
 
 GMODE gamemode;
 int gameCounter;
-int fadeCnt;
-bool fadeIn;
-bool fadeOut;
 bool pause;														//一時停止フラグ
+int cnt;
+int title;
+int titleMap[SCREEN_SIZE_Y/CHIP_SIZE][SCREEN_SIZE_X / CHIP_SIZE]
+{
+	9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,
+	9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,
+	9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,
+	9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,
+	9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,
+	9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,
+	9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,
+	9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,
+	9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,
+	9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,
+	9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,
+	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+};
 
 class player;
 class map;
@@ -34,9 +48,8 @@ void GameOver(void);
 void GameMainDraw(void);
 void GameTitleDraw(void);
 void GameOverDraw(void);
-bool FadeInScreen(int fadeStep);
-bool FadeOutScreen(int fadeStep);
 void HitCheck(void);
+void PlayerDeath(void);
 
 player* Player;
 map* Map;
@@ -50,9 +63,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 
 	gamemode = GMODE_INIT;
-	Player = new player();
-	Map = new map();
-	Enemy = new enemy();
 
 	//ｹﾞｰﾑﾙｰﾌﾟ
 	while (ProcessMessage() == 0
@@ -69,51 +79,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			break;
 		case GMODE_TITLE:
 			GameTitle();
-			if (fadeIn)
+			if (trgKey[START])
 			{
-				if (!FadeInScreen(5)) fadeIn = false;
+				gamemode = GMODE_GAME;
 			}
-			else if (fadeOut)
-			{
-				if (!FadeOutScreen(5))
-				{
-					gamemode = GMODE_GAME;
-					fadeOut = false;
-					fadeIn = true;
-				}
-			}
-			else
-			{
-				if (trgKey[START]) fadeOut = true;
-			}
-			//if (trgKey[START])
-			//{
-			//	gamemode = GMODE_GAME;
-			//}
 			break;
 		case GMODE_GAME:
 			GameMain();
-			if (fadeIn)
-			{
-				if (!FadeInScreen(5)) fadeIn = false;
-			}
-			if (Player->deathFlg == true)gamemode = GMODE_GAMEOVER;
+			if (Player->deathFlg == true)PlayerDeath();
 			break;
 		case GMODE_GAMEOVER:
 			GameOver();
-			if (fadeOut)
-			{
-				if (!FadeOutScreen(5))
-				{
-					gamemode = GMODE_INIT;
-					fadeOut = false;
-					fadeIn = true;
-				}
-			}
-			else
-			{
-				if (trgKey[START]) fadeOut = true;
-			}
+			gamemode = GMODE_INIT;
 			break;
 		default:
 			break;
@@ -138,14 +115,17 @@ bool SysInit(void)
 		return false;																	//処理内容 //returnは関数を抜けるときに使われる
 	}																					//ifの式はここまででﾜﾝｾｯﾄ
 	pause = false;
-	fadeIn = false;
-	fadeOut = false;
+	cnt = 0;
 	KeyCheckSystemInit();
+	title = LoadGraph(_T("画像/タイトルロゴ.png"), false);
 	return true;
 }
 
 void GameInit(void)
 {
+	Player = new player();
+	Map = new map();
+	Enemy = new enemy();
 }
 
 void GameTitle(void)
@@ -156,6 +136,25 @@ void GameTitle(void)
 void GameTitleDraw(void)
 {
 	DrawString(0, 0, _T("GameTitle"), 0xFFFFFF);
+	for (int y = 0; y < SCREEN_SIZE_Y / CHIP_SIZE; y++)
+	{
+		for (int x = 0; x < SCREEN_SIZE_X / CHIP_SIZE; x++)
+		{
+			switch (titleMap[y][x])
+			{
+			case 3:
+				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->blocks[4], false);
+				break;
+			case 9:
+				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->back[0], false);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	DrawGraph(200, SCREEN_SIZE_Y - 128, Player->pGraph[0], true);
+	DrawGraph(SCREEN_SIZE_X / 8, SCREEN_SIZE_Y / 6, title, true);
 }
 
 void GameMain(void)
@@ -174,7 +173,7 @@ void GameMain(void)
 		Player->Update();
 		Map->Update(Player);
 		
-		if (trgKey[START]) gamemode = GMODE_GAMEOVER;
+		//if (trgKey[START]) gamemode = GMODE_GAMEOVER;
 	}
 	GameMainDraw();
 	if (pause)
@@ -186,10 +185,10 @@ void GameMain(void)
 
 void GameMainDraw(void)
 {
-	DrawFormatString(0, 0, 0xFFFFFF, _T("GameMain:%d"), gameCounter);
 	Map->Draw();
 	Player->Draw();
 	Enemy->Draw();
+	DrawFormatString(0, 0, 0xFFFFFF, _T("GameMain:%d"), gameCounter);
 }
 
 void GameOver(void)
@@ -202,40 +201,13 @@ void GameOverDraw(void)
 	DrawString(0, 0, _T("GameOver"), 0xFFFFFF);
 }
 
-bool FadeInScreen(int fadeStep)
-{
-	fadeCnt += fadeStep;
-	if (fadeCnt <= 255)
-	{
-		SetDrawBright(fadeCnt, fadeCnt, fadeCnt);
-		return true;
-	}
-	else
-	{
-		SetDrawBright(255, 255, 255);
-		fadeCnt = 0;
-		return false;
-	}
-}
-
-bool FadeOutScreen(int fadeStep)
-{
-	fadeCnt += fadeStep;
-	if (fadeCnt <= 255)
-	{
-		SetDrawBright(255 - fadeCnt, 255 - fadeCnt, 255 - fadeCnt);
-		return true;
-	}
-	else
-	{
-		SetDrawBright(0, 0, 0);
-		fadeCnt = 0;
-		return false;
-	}
-}
-
 void HitCheck(void)
 {
 
 }
 
+void PlayerDeath(void)
+{
+	cnt++;
+	if (cnt > 100)gamemode = GMODE_GAMEOVER;
+}

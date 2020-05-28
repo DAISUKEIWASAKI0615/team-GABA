@@ -42,4 +42,6 @@ private:
 	float jumpCnt;
 	float vy;
 	float gr;
+	float playerStock;
+	int deathCnt;
 };
