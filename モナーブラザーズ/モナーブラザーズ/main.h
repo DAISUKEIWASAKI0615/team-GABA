@@ -8,6 +8,7 @@
 #define MAP_HEIGHT       SCREEN_SIZE_Y / CHIP_SIZE			// ƒ}ƒbƒv‚Ìc•
 #define P1 3.141592
 
+
 typedef struct {
 	float x;
 	float y;

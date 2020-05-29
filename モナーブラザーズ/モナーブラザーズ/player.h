@@ -26,6 +26,7 @@ public:
 	bool deathFlg;
 	bool dropFlg;
 	bool jumpFlg;
+	bool crearFlg;
 	int CharMove(float *X, float *Y, float *DownSP,float MoveX, float MoveY, float Size, bool *JumpFlag);
 
 	float MoveX, MoveY;
@@ -44,4 +45,7 @@ private:
 	float gr;
 	float playerStock;
 	int deathCnt;
+	int sound1,sound2;
+	int goalCnt;
+	bool goalFlg;
 };

@@ -20,7 +20,8 @@ int gameCounter;
 bool pause;														//一時停止フラグ
 int cnt;
 int title;
-int titleMap[SCREEN_SIZE_Y/CHIP_SIZE][SCREEN_SIZE_X / CHIP_SIZE]
+int bgm;
+int titleBack[SCREEN_SIZE_Y / CHIP_SIZE][SCREEN_SIZE_X / CHIP_SIZE]
 {
 	9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,
 	9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,
@@ -33,12 +34,28 @@ int titleMap[SCREEN_SIZE_Y/CHIP_SIZE][SCREEN_SIZE_X / CHIP_SIZE]
 	9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,
 	9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,
 	9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,
+	9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9
+};
+int titleMap[SCREEN_SIZE_Y/CHIP_SIZE][SCREEN_SIZE_X / CHIP_SIZE]
+{
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,4,5,6,0,0,
+	0,0,0,0,0,1,0,0,0,0,0,7,8,9,0,0,
 	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
 };
 
 class player;
 class map;
 class enemy;
+bool centerSpawn;
 
 bool SysInit(void);
 void GameInit(void);
@@ -63,6 +80,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 
 	gamemode = GMODE_INIT;
+	///*if (gamemode == GMODE_GAME)*/PlaySoundMem(bgm, DX_PLAYTYPE_LOOP);
 
 	//ｹﾞｰﾑﾙｰﾌﾟ
 	while (ProcessMessage() == 0
@@ -117,14 +135,21 @@ bool SysInit(void)
 	pause = false;
 	cnt = 0;
 	KeyCheckSystemInit();
+	centerSpawn = false;
 	title = LoadGraph(_T("画像/タイトルロゴ.png"), false);
+	bgm = LoadSoundMem(_T("sound/bgm_maoudamashii_8bit28.mp3"));
 	return true;
 }
 
 void GameInit(void)
 {
-	Player = new player();
 	Map = new map();
+	Player = new player();
+	if (centerSpawn == true)
+	{
+		Player->pos = { 62*CHIP_SIZE,SCREEN_SIZE_Y - 6 * CHIP_SIZE };
+		Map->centerFlg = true;
+	}
 	Enemy = new enemy();
 }
 
@@ -136,17 +161,38 @@ void GameTitle(void)
 void GameTitleDraw(void)
 {
 	DrawString(0, 0, _T("GameTitle"), 0xFFFFFF);
+	
 	for (int y = 0; y < SCREEN_SIZE_Y / CHIP_SIZE; y++)
 	{
 		for (int x = 0; x < SCREEN_SIZE_X / CHIP_SIZE; x++)
 		{
+			if(titleBack[y][x]==9)DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->back[0], false);
+
 			switch (titleMap[y][x])
 			{
+			case 1:
+				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->grass, true);
+				break;
 			case 3:
 				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->blocks[4], false);
 				break;
+			case 4:
+				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->mountain[0], true);
+				break;
+			case 5:
+				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->mountain[1], true);
+				break;
+			case 6:
+				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->mountain[2], true);
+				break;
+			case 7:
+				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->mountain[3], true);
+				break;
+			case 8:
+				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->mountain[4], true);
+				break;
 			case 9:
-				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->back[0], false);
+				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->mountain[5], true);
 				break;
 			default:
 				break;
@@ -170,9 +216,10 @@ void GameMain(void)
 	else
 	{
 		HitCheck();
-		Player->Update();
 		Map->Update(Player);
-		
+		Player->Update();
+		if (Map->centerFlg == true)centerSpawn = true;
+		if (Player->deathFlg == true)StopSoundMem(bgm);
 		//if (trgKey[START]) gamemode = GMODE_GAMEOVER;
 	}
 	GameMainDraw();
