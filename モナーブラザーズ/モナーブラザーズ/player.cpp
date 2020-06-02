@@ -188,15 +188,16 @@ void player::Update()
 			{
 				playerStock--;
 			}
-			if (chips->GetChipParam(pos.x + 40, pos.y) == 25 ||
-				chips->GetChipParam(pos.x + 40, pos.y) == 26 ||
-				chips->GetChipParam(pos.x + 40, pos.y) == 27 ||
-				chips->GetChipParam(pos.x + 40, pos.y) == 28 ||
-				chips->GetChipParam(pos.x + 40, pos.y) == 29 ||
-				chips->GetChipParam(pos.x + 40, pos.y) == 30 ||
-				chips->GetChipParam(pos.x + 40, pos.y) == 31 ||
-				chips->GetChipParam(pos.x + 40, pos.y) == 32)
+			if (chips->GetChipParam(pos.x, pos.y) == 25 ||
+				chips->GetChipParam(pos.x, pos.y) == 26 ||
+				chips->GetChipParam(pos.x, pos.y) == 27 ||
+				chips->GetChipParam(pos.x, pos.y) == 28 ||
+				chips->GetChipParam(pos.x, pos.y) == 29 ||
+				chips->GetChipParam(pos.x, pos.y) == 30 ||
+				chips->GetChipParam(pos.x, pos.y) == 31 ||
+				chips->GetChipParam(pos.x, pos.y) == 32)
 			{
+				pos.x = (MAP_WIDTH*CHIP_SIZE) - (14* CHIP_SIZE);
 				crearFlg = true;
 			}
 		}
@@ -217,30 +218,25 @@ void player::Update()
 		}
 		else if (crearFlg == true)
 		{
-			if (chips->GetChipParam(pos.x, pos.y + 128) != 15)
+			if (pos.x <  (MAP_WIDTH*CHIP_SIZE)-(10*CHIP_SIZE))
 			{
-				MoveX = 0;
-				MoveY = 0;
-				goalCnt++;
-				if (goalCnt > 20)
-				{
-					goalCnt += 0;
-					MoveY = 5;
-					CharMove(&pos.x, &pos.y, &DownSp, MoveX, MoveY, CHAR_SIZE, &jumpFlg);
-					if (jumpFlg == false)
-					{
-						goalCnt++;
-						if (goalCnt > 30)
-						{
-							goalCnt += 0;
-							runFlg = true;
-							MoveY = 0;
-							MoveX = 3;
-							CharMove(&pos.x, &pos.y, &DownSp, MoveX, MoveY, CHAR_SIZE, &jumpFlg);
-							//if(goalCnt>40)
-						}
-					}
-				}
+				dire = RIGHT;
+			MoveX = 0;
+			MoveY = 0;
+			goalCnt++;
+			if (goalCnt > 20)
+			{
+				goalCnt += 0;
+				MoveY = 5;
+			}
+			if (jumpFlg == false)
+			{
+				runFlg = true;
+				DownSp += 2;
+				MoveY = DownSp;
+				MoveX = 3;
+			}
+			CharMove(&pos.x, &pos.y, &DownSp, MoveX, MoveY, CHAR_SIZE, &jumpFlg);
 			}
 		}
 }
