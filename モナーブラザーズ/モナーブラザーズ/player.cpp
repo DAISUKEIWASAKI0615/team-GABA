@@ -197,7 +197,7 @@ void player::Update()
 				chips->GetChipParam(pos.x, pos.y) == 31 ||
 				chips->GetChipParam(pos.x, pos.y) == 32)
 			{
-				pos.x = (MAP_WIDTH*CHIP_SIZE) - (14* CHIP_SIZE);
+				pos.x = (MAP_WIDTH*CHIP_SIZE) - (13* CHIP_SIZE)-32;
 				crearFlg = true;
 			}
 		}
@@ -218,7 +218,7 @@ void player::Update()
 		}
 		else if (crearFlg == true)
 		{
-			if (pos.x <  (MAP_WIDTH*CHIP_SIZE)-(10*CHIP_SIZE))
+			if (pos.x <  (MAP_WIDTH*CHIP_SIZE)-(10*CHIP_SIZE)+32)
 			{
 				dire = RIGHT;
 			MoveX = 0;
