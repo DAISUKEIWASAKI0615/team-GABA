@@ -11,6 +11,7 @@ typedef enum {
 	GMODE_INIT,
 	GMODE_TITLE,
 	GMODE_GAME,
+	GMODE_STOCK,
 	GMODE_GAMEOVER
 }GMODE;
 
@@ -20,7 +21,6 @@ int gameCounter;
 bool pause;														//一時停止フラグ
 int cnt;
 int title;
-int bgm;
 int titleBack[SCREEN_SIZE_Y / CHIP_SIZE][SCREEN_SIZE_X / CHIP_SIZE]
 {
 	9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,
@@ -56,10 +56,13 @@ class player;
 class map;
 class enemy;
 bool centerSpawn;
+int playerstock;
 
 bool SysInit(void);
 void GameInit(void);
 void GameTitle(void);
+void GameStock(void);
+void GameStockDraw(void);
 void GameMain(void);
 void GameOver(void);
 void GameMainDraw(void);
@@ -80,7 +83,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 
 	gamemode = GMODE_INIT;
-	///*if (gamemode == GMODE_GAME)*/PlaySoundMem(bgm, DX_PLAYTYPE_LOOP);
 
 	//ｹﾞｰﾑﾙｰﾌﾟ
 	while (ProcessMessage() == 0
@@ -97,6 +99,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			break;
 		case GMODE_TITLE:
 			GameTitle();
+			if (trgKey[START])
+			{
+				gamemode = GMODE_STOCK;
+			}
+			break;
+		case GMODE_STOCK:
 			if (trgKey[START])
 			{
 				gamemode = GMODE_GAME;
@@ -133,16 +141,16 @@ bool SysInit(void)
 		return false;																	//処理内容 //returnは関数を抜けるときに使われる
 	}																					//ifの式はここまででﾜﾝｾｯﾄ
 	pause = false;
-	cnt = 0;
 	KeyCheckSystemInit();
 	centerSpawn = false;
+	playerstock = 2;
 	title = LoadGraph(_T("画像/タイトルロゴ.png"), false);
-	bgm = LoadSoundMem(_T("sound/bgm_maoudamashii_8bit28.mp3"));
 	return true;
 }
 
 void GameInit(void)
 {
+	cnt = 0;
 	Map = new map();
 	Player = new player();
 	if (centerSpawn == true)
@@ -151,6 +159,18 @@ void GameInit(void)
 		Map->centerFlg = true;
 	}
 	Enemy = new enemy();
+
+}
+
+void GameStock(void)
+{
+	GameStockDraw();
+}
+
+void GameStockDraw(void)
+{
+	DrawGraph(SCREEN_SIZE_X / 2 - CHIP_SIZE, SCREEN_SIZE_Y/2-CHIP_SIZE, Player->pGraph[0], true);
+	DrawFormatString(SCREEN_SIZE_X / 2 + CHIP_SIZE, SCREEN_SIZE_Y / 2 + CHIP_SIZE, 0xffffff, _T("×%d"), playerstock);
 }
 
 void GameTitle(void)
@@ -219,7 +239,6 @@ void GameMain(void)
 		Map->Update(Player);
 		Player->Update();
 		if (Map->centerFlg == true)centerSpawn = true;
-		if (Player->deathFlg == true)StopSoundMem(bgm);
 		//if (trgKey[START]) gamemode = GMODE_GAMEOVER;
 	}
 	GameMainDraw();
@@ -256,5 +275,5 @@ void HitCheck(void)
 void PlayerDeath(void)
 {
 	cnt++;
-	if (cnt > 100)gamemode = GMODE_GAMEOVER;
+	if (cnt > 120)gamemode = GMODE_GAMEOVER;
 }
