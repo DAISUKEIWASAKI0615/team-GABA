@@ -12,7 +12,6 @@ typedef enum {
 	GMODE_TITLE,
 	GMODE_GAME,
 	GMODE_STOCK,
-	GMODE_GAMEOVER
 }GMODE;
 
 
@@ -55,8 +54,11 @@ int titleMap[SCREEN_SIZE_Y/CHIP_SIZE][SCREEN_SIZE_X / CHIP_SIZE]
 class player;
 class map;
 class enemy;
+
 bool centerSpawn;
 int playerstock;
+int stockCnt;
+int goal;
 
 bool SysInit(void);
 void GameInit(void);
@@ -64,11 +66,8 @@ void GameTitle(void);
 void GameStock(void);
 void GameStockDraw(void);
 void GameMain(void);
-void GameOver(void);
 void GameMainDraw(void);
 void GameTitleDraw(void);
-void GameOverDraw(void);
-void HitCheck(void);
 void PlayerDeath(void);
 
 player* Player;
@@ -82,7 +81,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return -1;
 	}
 
-	gamemode = GMODE_INIT;
+	gamemode = GMODE_TITLE;
 
 	//ｹﾞｰﾑﾙｰﾌﾟ
 	while (ProcessMessage() == 0
@@ -95,28 +94,29 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		{
 		case GMODE_INIT:
 			GameInit();
-			gamemode = GMODE_TITLE;
+			gamemode = GMODE_GAME;
 			break;
 		case GMODE_TITLE:
 			GameTitle();
-			if (trgKey[START])
-			{
-				gamemode = GMODE_STOCK;
-			}
+			if (trgKey[START])gamemode = GMODE_STOCK;
 			break;
 		case GMODE_STOCK:
-			if (trgKey[START])
-			{
-				gamemode = GMODE_GAME;
-			}
+			GameStock();
+			stockCnt++;
+			if (stockCnt>60)gamemode = GMODE_INIT;
 			break;
 		case GMODE_GAME:
 			GameMain();
 			if (Player->deathFlg == true)PlayerDeath();
-			break;
-		case GMODE_GAMEOVER:
-			GameOver();
-			gamemode = GMODE_INIT;
+			if (Player->goalFlg == true)
+			{
+				goal++;
+				if (goal > 120)
+				{
+					SysInit();
+					gamemode = GMODE_TITLE;
+				}
+			}
 			break;
 		default:
 			break;
@@ -144,6 +144,11 @@ bool SysInit(void)
 	KeyCheckSystemInit();
 	centerSpawn = false;
 	playerstock = 2;
+	stockCnt = 0;
+	Map = new map();
+	Enemy = new enemy();
+	Player = new player();
+	goal = 0;
 	title = LoadGraph(_T("画像/タイトルロゴ.png"), false);
 	return true;
 }
@@ -152,14 +157,13 @@ void GameInit(void)
 {
 	cnt = 0;
 	Map = new map();
+	Enemy = new enemy();
 	Player = new player();
 	if (centerSpawn == true)
 	{
 		Player->pos = { 62*CHIP_SIZE,SCREEN_SIZE_Y - 6 * CHIP_SIZE };
 		Map->centerFlg = true;
 	}
-	Enemy = new enemy();
-
 }
 
 void GameStock(void)
@@ -169,8 +173,9 @@ void GameStock(void)
 
 void GameStockDraw(void)
 {
-	DrawGraph(SCREEN_SIZE_X / 2 - CHIP_SIZE, SCREEN_SIZE_Y/2-CHIP_SIZE, Player->pGraph[0], true);
-	DrawFormatString(SCREEN_SIZE_X / 2 + CHIP_SIZE, SCREEN_SIZE_Y / 2 + CHIP_SIZE, 0xffffff, _T("×%d"), playerstock);
+	DrawGraph(SCREEN_SIZE_X / 2 - CHIP_SIZE, SCREEN_SIZE_Y/2, Player->pGraph[0], true);
+	DrawFormatString(SCREEN_SIZE_X / 2, SCREEN_SIZE_Y / 2 + 16, 0xffffff, _T("×%d"), playerstock);
+	SetFontSize(40);
 }
 
 void GameTitle(void)
@@ -180,13 +185,13 @@ void GameTitle(void)
 
 void GameTitleDraw(void)
 {
-	DrawString(0, 0, _T("GameTitle"), 0xFFFFFF);
-	
+	//DrawString(0, 0, _T("GameTitle"), 0xFFFFFF);
+
 	for (int y = 0; y < SCREEN_SIZE_Y / CHIP_SIZE; y++)
 	{
 		for (int x = 0; x < SCREEN_SIZE_X / CHIP_SIZE; x++)
 		{
-			if(titleBack[y][x]==9)DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->back[0], false);
+			if (titleBack[y][x] == 9)DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->back[0], false);
 
 			switch (titleMap[y][x])
 			{
@@ -221,6 +226,8 @@ void GameTitleDraw(void)
 	}
 	DrawGraph(200, SCREEN_SIZE_Y - 128, Player->pGraph[0], true);
 	DrawGraph(SCREEN_SIZE_X / 8, SCREEN_SIZE_Y / 6, title, true);
+	DrawString(SCREEN_SIZE_X / 3, SCREEN_SIZE_Y - 256, _T("スペースキーを押せ！"), 0x000000);
+	SetFontSize(20);
 }
 
 void GameMain(void)
@@ -235,9 +242,9 @@ void GameMain(void)
 	}
 	else
 	{
-		HitCheck();
 		Map->Update(Player);
 		Player->Update();
+		Enemy->Update();
 		if (Map->centerFlg == true)centerSpawn = true;
 		//if (trgKey[START]) gamemode = GMODE_GAMEOVER;
 	}
@@ -245,7 +252,7 @@ void GameMain(void)
 	if (pause)
 	{
 		SetDrawBright(255, 255, 255);
-		DrawString(360, 292, _T("PAUSE"), 0xFFFFFF);
+		//DrawString(360, 292, _T("PAUSE"), 0xFFFFFF);
 	}
 }
 
@@ -253,27 +260,13 @@ void GameMainDraw(void)
 {
 	Map->Draw();
 	Player->Draw();
-	Enemy->Draw();
-	DrawFormatString(0, 0, 0xFFFFFF, _T("GameMain:%d"), gameCounter);
-}
-
-void GameOver(void)
-{
-	GameOverDraw();
-}
-
-void GameOverDraw(void)
-{
-	DrawString(0, 0, _T("GameOver"), 0xFFFFFF);
-}
-
-void HitCheck(void)
-{
-
+	//Enemy->Draw();
+	//DrawFormatString(0, 0, 0xFFFFFF, _T("GameMain:%d"), gameCounter);
 }
 
 void PlayerDeath(void)
 {
+	stockCnt = 0;
 	cnt++;
-	if (cnt > 120)gamemode = GMODE_GAMEOVER;
+	if (cnt > 115)gamemode = GMODE_STOCK;
 }

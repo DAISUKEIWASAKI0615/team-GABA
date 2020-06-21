@@ -202,16 +202,21 @@ void player::Update()
 	}
 	else if (deathFlg == true)
 	{
+		int soundCnt = 0;
 			deathCnt++;
-		if (CheckSoundMem(sound2) != 1)PlaySoundMem(sound2, DX_PLAYTYPE_BACK);
-		else if (CheckSoundMem(sound2) == 1)
+			if (soundCnt == 0 && CheckSoundMem(sound2) != 1)
+			{
+				soundCnt=1;
+				PlaySoundMem(sound2, DX_PLAYTYPE_BACK);
+			}
+		if (soundCnt >0 )
 		{
-			if (deathCnt == 114)DeleteSoundMem(sound2);
+			if (deathCnt == 115)DeleteSoundMem(sound2);
 		}
 
 		if (pos.y < SCREEN_SIZE_Y)
 		{
-			deathCnt++;
+			//deathCnt++;
 			if (deathCnt > 10)
 			{
 				pos.y -= 30;
@@ -242,6 +247,13 @@ void player::Update()
 			}
 			CharMove(&pos.x, &pos.y, &DownSp, MoveX, MoveY, CHAR_SIZE, &jumpFlg);
 		}
+		//if (pos.x == (MAP_WIDTH*CHIP_SIZE) - (8 * CHIP_SIZE) + 32)
+		else
+		{
+			goalFlg = true;
+
+		}
+
 	}
 }
 

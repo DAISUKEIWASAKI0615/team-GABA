@@ -5,7 +5,7 @@ class base
 {
 public:
 	base();
-	~base();
+	virtual ~base();
 
 	virtual void Update() = 0;
 	void Draw();
