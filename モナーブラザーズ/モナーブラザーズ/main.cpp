@@ -260,7 +260,7 @@ void GameMainDraw(void)
 {
 	Map->Draw();
 	Player->Draw();
-	//Enemy->Draw();
+	Enemy->Draw();
 	//DrawFormatString(0, 0, 0xFFFFFF, _T("GameMain:%d"), gameCounter);
 }
 
