@@ -14,8 +14,13 @@ typedef enum {
 	GMODE_STOCK,
 }GMODE;
 
+typedef enum {
+	STAGE1_CLEAR,
+	STAGE2_CLEAR
+}CREAR;
 
 GMODE gamemode;
+CREAR stageCrear;
 int gameCounter;
 bool pause;														//一時停止フラグ
 int cnt;
@@ -35,6 +40,7 @@ int titleBack[SCREEN_SIZE_Y / CHIP_SIZE][SCREEN_SIZE_X / CHIP_SIZE]
 	9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,
 	9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9
 };
+
 int titleMap[SCREEN_SIZE_Y/CHIP_SIZE][SCREEN_SIZE_X / CHIP_SIZE]
 {
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -51,9 +57,6 @@ int titleMap[SCREEN_SIZE_Y/CHIP_SIZE][SCREEN_SIZE_X / CHIP_SIZE]
 	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
 };
 
-class player;
-class map;
-class enemy;
 
 bool centerSpawn;
 int playerstock;
@@ -69,10 +72,6 @@ void GameMain(void);
 void GameMainDraw(void);
 void GameTitleDraw(void);
 void PlayerDeath(void);
-
-player* Player;
-map* Map;
-enemy* Enemy;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -94,27 +93,31 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		{
 		case GMODE_INIT:
 			GameInit();
-			gamemode = GMODE_GAME;
+			gamemode = GMODE_STOCK;
 			break;
 		case GMODE_TITLE:
 			GameTitle();
-			if (trgKey[START])gamemode = GMODE_STOCK;
+			if (trgKey[START])gamemode = GMODE_INIT;
 			break;
 		case GMODE_STOCK:
 			GameStock();
 			stockCnt++;
-			if (stockCnt>60)gamemode = GMODE_INIT;
+			if (stockCnt>60)gamemode = GMODE_GAME;
 			break;
 		case GMODE_GAME:
 			GameMain();
-			if (Player->deathFlg == true)PlayerDeath();
-			if (Player->goalFlg == true)
+			if (lpPlayer.deathFlg == true)PlayerDeath();
+			if (lpPlayer.goalFlg == true)
 			{
 				goal++;
 				if (goal > 120)
 				{
-					SysInit();
-					gamemode = GMODE_TITLE;
+					centerSpawn = false;
+					goal = 0;
+					stockCnt = 0;
+					goal = 0;
+					lpMap.stages = STAGE2;
+					gamemode = GMODE_INIT;
 				}
 			}
 			break;
@@ -143,27 +146,30 @@ bool SysInit(void)
 	pause = false;
 	KeyCheckSystemInit();
 	centerSpawn = false;
-	playerstock = 2;
 	stockCnt = 0;
-	Map = new map();
-	Enemy = new enemy();
-	Player = new player();
 	goal = 0;
+	lpEnemy.Init();
+	lpPlayer.Init();
+	lpMap.Init();
+	lpPlayer.playerStock = 2;
+	playerstock = lpPlayer.playerStock;
 	title = LoadGraph(_T("画像/タイトルロゴ.png"), false);
+	lpMap.stages = STAGE1;
 	return true;
 }
 
 void GameInit(void)
 {
 	cnt = 0;
-	Map = new map();
-	Enemy = new enemy();
-	Player = new player();
+	lpEnemy.Init();
+	lpPlayer.Init();
+	lpMap.Init();
 	if (centerSpawn == true)
 	{
-		Player->pos = { 62*CHIP_SIZE,SCREEN_SIZE_Y - 6 * CHIP_SIZE };
-		Map->centerFlg = true;
+		lpPlayer.pos = { 62*CHIP_SIZE,SCREEN_SIZE_Y - 6 * CHIP_SIZE };
+		lpMap.centerFlg = true;
 	}
+	playerstock = lpPlayer.playerStock;
 }
 
 void GameStock(void)
@@ -173,7 +179,7 @@ void GameStock(void)
 
 void GameStockDraw(void)
 {
-	DrawGraph(SCREEN_SIZE_X / 2 - CHIP_SIZE, SCREEN_SIZE_Y/2, Player->pGraph[0], true);
+	DrawGraph(SCREEN_SIZE_X / 2 - CHIP_SIZE, SCREEN_SIZE_Y/2, lpPlayer.pGraph[0], true);
 	DrawFormatString(SCREEN_SIZE_X / 2, SCREEN_SIZE_Y / 2 + 16, 0xffffff, _T("×%d"), playerstock);
 	SetFontSize(40);
 }
@@ -191,43 +197,43 @@ void GameTitleDraw(void)
 	{
 		for (int x = 0; x < SCREEN_SIZE_X / CHIP_SIZE; x++)
 		{
-			if (titleBack[y][x] == 9)DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->back[0], false);
+			if (titleBack[y][x] == 9)DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, lpMap.back[0], false);
 
 			switch (titleMap[y][x])
 			{
 			case 1:
-				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->grass, true);
+				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, lpMap.grass, true);
 				break;
 			case 3:
-				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->blocks[4], false);
+				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, lpMap.blocks[4], false);
 				break;
 			case 4:
-				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->mountain[0], true);
+				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, lpMap.mountain[0], true);
 				break;
 			case 5:
-				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->mountain[1], true);
+				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, lpMap.mountain[1], true);
 				break;
 			case 6:
-				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->mountain[2], true);
+				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, lpMap.mountain[2], true);
 				break;
 			case 7:
-				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->mountain[3], true);
+				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, lpMap.mountain[3], true);
 				break;
 			case 8:
-				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->mountain[4], true);
+				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, lpMap.mountain[4], true);
 				break;
 			case 9:
-				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, Map->mountain[5], true);
+				DrawGraph(x*CHIP_SIZE, y*CHIP_SIZE, lpMap.mountain[5], true);
 				break;
 			default:
 				break;
 			}
 		}
 	}
-	DrawGraph(200, SCREEN_SIZE_Y - 128, Player->pGraph[0], true);
+	DrawGraph(200, SCREEN_SIZE_Y - 128, lpPlayer.pGraph[0], true);
 	DrawGraph(SCREEN_SIZE_X / 8, SCREEN_SIZE_Y / 6, title, true);
+	SetFontSize(30);
 	DrawString(SCREEN_SIZE_X / 3, SCREEN_SIZE_Y - 256, _T("スペースキーを押せ！"), 0x000000);
-	SetFontSize(20);
 }
 
 void GameMain(void)
@@ -242,10 +248,10 @@ void GameMain(void)
 	}
 	else
 	{
-		Map->Update(Player);
-		Player->Update();
-		Enemy->Update();
-		if (Map->centerFlg == true)centerSpawn = true;
+		lpMap.Update();
+		lpPlayer.Update();
+		lpEnemy.Update();
+		if (lpMap.centerFlg == true)centerSpawn = true;
 		//if (trgKey[START]) gamemode = GMODE_GAMEOVER;
 	}
 	GameMainDraw();
@@ -258,15 +264,20 @@ void GameMain(void)
 
 void GameMainDraw(void)
 {
-	Map->Draw();
-	Player->Draw();
-	Enemy->Draw();
+	lpMap.Draw();
+	lpPlayer.Draw();
+	lpEnemy.Draw();
 	//DrawFormatString(0, 0, 0xFFFFFF, _T("GameMain:%d"), gameCounter);
 }
 
 void PlayerDeath(void)
 {
 	stockCnt = 0;
+	if (cnt == 0)
+	{
+		lpPlayer.playerStock--;
+		PlaySoundMem(lpPlayer.sound2, DX_PLAYTYPE_BACK);
+	}
 	cnt++;
-	if (cnt > 115)gamemode = GMODE_STOCK;
+	if (cnt > 115)gamemode = GMODE_INIT;
 }

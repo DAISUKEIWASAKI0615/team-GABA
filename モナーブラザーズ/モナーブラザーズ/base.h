@@ -1,6 +1,12 @@
 #pragma once
 #include "DxLib.h"
 
+typedef enum
+{
+	LEFT,
+	RIGHT
+}DIRE;
+
 class base
 {
 public:

@@ -6,18 +6,17 @@
 #define G 0.3                         // キャラに掛かる重力加速度
 #define VELOCITY_X_MAX 10	// ﾌﾟﾚｲﾔｰ最大速度
 
-typedef enum
-{
-	LEFT,
-	RIGHT
-}DIRE;
+#define lpPlayer player::GetInstance()
 
 class player :public base
 {
 public:
-	player();
-	virtual ~player();
-
+	static player& GetInstance()
+	{
+		static player s_Instance;
+		return s_Instance;
+	}
+	void Init();
 	void Draw();
 	void Update();
 
@@ -31,7 +30,12 @@ public:
 	int CharMove(float *X, float *Y, float *DownSP,float MoveX, float MoveY, float Size, bool *JumpFlag);
 
 	float MoveX, MoveY;
+	float playerStock;
+	int sound1,sound2;
+
 private:
+	player();
+	virtual ~player();
 	DIRE dire;
 	int key;
 	float move;
@@ -44,8 +48,6 @@ private:
 	float jumpCnt;
 	float vy;
 	float gr;
-	float playerStock;
 	int deathCnt;
-	int sound1,sound2;
 	int goalCnt;
 };

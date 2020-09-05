@@ -39,8 +39,8 @@ void KeyCheck()
 	if (CheckHitKey(KEY_INPUT_RIGHT)) newKey[P1_RIGHT] = true;
 	if (CheckHitKey(KEY_INPUT_DOWN)) newKey[P1_DOWN] = true;
 	if (CheckHitKey(KEY_INPUT_LEFT)) newKey[P1_LEFT] = true;
-	if (CheckHitKey(KEY_INPUT_RCONTROL)) newKey[P1_A] = true;
-	if (CheckHitKey(KEY_INPUT_RCONTROL)) newKey[P1_B] = true;
+	if (CheckHitKey(KEY_INPUT_LSHIFT)) newKey[P1_A] = true;
+	if (CheckHitKey(KEY_INPUT_SPACE)) newKey[P1_B] = true;
 
 	if (CheckHitKey(KEY_INPUT_W)) newKey[P2_UP] = true;
 	if (CheckHitKey(KEY_INPUT_D)) newKey[P2_RIGHT] = true;
