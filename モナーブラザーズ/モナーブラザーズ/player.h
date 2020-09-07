@@ -31,7 +31,7 @@ public:
 
 	float MoveX, MoveY;
 	float playerStock;
-	int sound1,sound2;
+	int sound1,sound2,sound3;
 
 private:
 	player();

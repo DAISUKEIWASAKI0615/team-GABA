@@ -55,6 +55,7 @@ void map::Init()
 	cameraX = SCREEN_SIZE_X / 2;
 	cameraY = SCREEN_SIZE_Y / 2;
 	bgm = LoadSoundMem(_T("sound/bgm_maoudamashii_8bit28.mp3"));
+	sound= LoadSoundMem(_T("sound/nc124904.wav"));
 }
 
 void map::Draw()
@@ -502,6 +503,7 @@ void map::BlocksEffects(float X, float Y, bool flg1, bool flg2)
 			x = (int)aX / CHIP_SIZE;
 			y = (int)aY / CHIP_SIZE;
 			mapData[y][x] = 1;
+			PlaySoundMem(sound, DX_PLAYTYPE_BACK);
 		}
 		if (GetChipParam(bX, aY) == 0)
 		{
@@ -509,6 +511,7 @@ void map::BlocksEffects(float X, float Y, bool flg1, bool flg2)
 			x = (int)bX / CHIP_SIZE;
 			y = (int)aY / CHIP_SIZE;
 			mapData[y][x] = 1;
+			PlaySoundMem(sound, DX_PLAYTYPE_BACK);
 		}
 		if (GetChipParam(aX, aY) == 2 && GetChipsFlag(aX, aY) == false)
 		{
@@ -530,6 +533,7 @@ void map::BlocksEffects(float X, float Y, bool flg1, bool flg2)
 			x = (int)aX / CHIP_SIZE;
 			y = (int)aY / CHIP_SIZE;
 			mapData[y][x] = 1;
+			PlaySoundMem(sound, DX_PLAYTYPE_BACK);
 		}
 		if (GetChipParam(bX, aY) == 5 && GetChipsFlag(bX, aY) == true)
 		{
@@ -537,6 +541,7 @@ void map::BlocksEffects(float X, float Y, bool flg1, bool flg2)
 			x = (int)bX / CHIP_SIZE;
 			y = (int)aY / CHIP_SIZE;
 			mapData[y][x] = 1;
+			PlaySoundMem(sound, DX_PLAYTYPE_BACK);
 		}
 		//ヒップドロップによる判定
 		if (flg1 == true && GetChipParam(aX, bY) == 0)
@@ -545,6 +550,7 @@ void map::BlocksEffects(float X, float Y, bool flg1, bool flg2)
 			x = (int)aX / CHIP_SIZE;
 			y = (int)bY / CHIP_SIZE;
 			mapData[y][x] = 1;
+			PlaySoundMem(sound, DX_PLAYTYPE_BACK);
 		}
 		if (flg1 == true && GetChipParam(bX, bY) == 0)
 		{
@@ -552,6 +558,7 @@ void map::BlocksEffects(float X, float Y, bool flg1, bool flg2)
 			x = (int)bX / CHIP_SIZE;
 			y = (int)bY / CHIP_SIZE;
 			mapData[y][x] = 1;
+			PlaySoundMem(sound, DX_PLAYTYPE_BACK);
 		}
 		if (flg1 == true && GetChipParam(aX, bY) == 2 && GetChipsFlag(bX, aY) == true)
 		{

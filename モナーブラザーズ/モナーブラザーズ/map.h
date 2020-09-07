@@ -71,6 +71,7 @@ public:
 	float cameraX,cameraY;
 	float gimPosY[GIMMICK_SIZE];
 	int bgm;
+	int sound;
 
 	void Init();
 	void Draw();

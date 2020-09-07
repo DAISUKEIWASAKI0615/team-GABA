@@ -37,6 +37,7 @@ void player::Init()
 	goalFlg = false;
 	sound1 = LoadSoundMem(_T("sound/jump06.mp3"));
 	sound2= LoadSoundMem(_T("sound/nc67702.wav"));
+	sound3 = LoadSoundMem(_T("sound/nc124898.wav"));
 }
 
 void player::Draw()
@@ -203,7 +204,7 @@ void player::Update()
 				jumpFlg = false;
 				jumpFlg = true;
 				if (dropFlg != true)DownSp = -27;
-				PlaySoundMem(sound1, DX_PLAYTYPE_BACK);
+				PlaySoundMem(sound3, DX_PLAYTYPE_BACK);
 				gr = 1.5;
 				lpEnemy.deathFlg[i] = true;
 			}
